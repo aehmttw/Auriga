@@ -19,7 +19,7 @@ Click the screen to advance text or interact with the world.
 
 Sources:
 
-https://fonts.google.com/specimen/Audiowide?sort=popularity - open font license
+https://fonts.google.com/specimen/Audiowide?sort=popularity - open font license (https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL)
 
 This game was built with [NEST](NEST.md).
 
