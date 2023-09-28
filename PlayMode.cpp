@@ -209,7 +209,7 @@ float char_widths[] = {32.5156f, 26.0312f, 38.2344f, 72.9531f, 53.125f, 86.625f,
                        66.1094f, 83.4531f, 80.9062f,74.7031f, 82.3281f, 75.5312f, 73.8281f, 82.3281f, 84.9062f, 27.6406f,73.4375f, 81.3438f, 73.6406f, 96.2344f, 84.7188f, 86.0312f,
                        80.6094f,86.0312f, 82.7188f, 77.0938f, 72.6094f, 83.3438f, 77.25f, 100.25f,78.7188f, 78.125f, 71.3438f, 36.5312f, 65.9219f, 36.5312f, 43.0156f,68.1094f,
                        55.7188f, 65.3281f, 69.0469f, 61.2344f, 70.0156f, 65.3281f,54.7812f, 69.0469f, 70.3125f, 25.0469f, 25.0469f, 69.1406f, 31.3438f,87.3594f, 69.625f, 68.2188f,
-                       69.0469f, 69.0469f, 54.5469f, 59.0312f,56.3438f, 69.625f, 67.5312f, 91.3125f, 69.1406f, 70.3125f, 60.1094f,42.4375f, 26.0312f, 42.4375f, 63.3281};
+                       69.0469f, 69.0469f, 54.5469f, 59.0312f,56.3438f, 69.625f, 67.5312f, 91.3125f, 69.1406f, 70.3125f, 60.1094f,42.4375f, 26.0312f, 42.4375f, 63.3281f};
 
 void draw_string(std::string text, glm::vec4 color, float x, float y, float x_scale, float y_scale) {
     float advance = 0.0f;
@@ -312,7 +312,7 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 	if (evt.type == SDL_MOUSEBUTTONDOWN){
         if (dialogs.size() > 0){
             if (dialog_time < dialogs.begin()->length())
-                dialog_time = dialogs.begin()->length();
+                dialog_time = (float) (dialogs.begin()->length());
             else {
                 dialogs.erase(dialogs.begin());
                 dialog_time = 0;

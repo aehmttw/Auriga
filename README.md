@@ -1,12 +1,13 @@
-# (TODO: your game's title)
+# Auriga
 
-Author: (TODO: your name)
+Author: Matei Budiu
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: This is a game that provides lore for the other games I have made for this class. It's a point and click story game.
 
-Text Drawing: (TODO: how does the text drawing in this game work? Is text precomputed? Rendered at runtime? What files or utilities are involved?)
+Text Drawing: I used Harfbuzz to pre-render the text to a texture atlas and output widths of characters, and then create a VAO for each character, and display them accordingly.
 
-Choices: (TODO: how does the game store choices and narrative? How are they authored? Anything nifty you want to point out?)
+Choices: There are some data structures in the code which link to each other - areas define backdrops, interactables are keys, and doors can require keys
+to be used. In the end, everything is configured in the constructor of playmode making it easy to write, but not data-driven.
 
 Screen Shot:
 
@@ -14,9 +15,11 @@ Screen Shot:
 
 How To Play:
 
-(TODO: describe the controls and (if needed) goals/strategy.)
+Click the screen to advance text or interact with the world.
 
-Sources: (TODO: list a source URL for any assets you did not create yourself. Make sure you have a license for the asset.)
+Sources:
+
+https://fonts.google.com/specimen/Audiowide?sort=popularity - open font license
 
 This game was built with [NEST](NEST.md).
 
