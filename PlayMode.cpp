@@ -18,10 +18,11 @@
 std::vector<std::string> dialogs;
 std::vector<std::string> keys_acquired;
 std::vector<GLuint> char_vaos;
+float dialog_time = 0.0f;
 
 GLuint image_vao = 0;
 GLuint font_tex = 0;
-GLuint scenes[] = {0, 0, 0, 0, 0, 0};
+GLuint scenes[20];
 
 struct Door;
 struct Interactable;
@@ -203,18 +204,23 @@ void draw_image(GLuint image, GLuint tex, glm::vec4 color, float x, float y, flo
     GL_ERRORS();
 }
 
-float char_widths[] = {32.5156, 26.0312, 38.2344, 72.9531, 53.125, 86.625, 65.8281,21.2344,42.7188, 42.7188, 54.25, 53.9062, 19.2031, 57.125,20.5156, 63.9219,
-                       91.7031, 35.4531, 75.25, 71.9219, 77.3438,75.0469, 73.2031, 62.75, 74.125, 74.4219, 24.3125, 25.1406,52.5469, 59.125, 52.5469, 66.5469,
-                       66.1094, 83.4531, 80.9062,74.7031, 82.3281, 75.5312, 73.8281, 82.3281, 84.9062, 27.6406,73.4375, 81.3438, 73.6406, 96.2344, 84.7188, 86.0312,
-                       80.6094,86.0312, 82.7188, 77.0938, 72.6094, 83.3438, 77.25, 100.25,78.7188, 78.125, 71.3438, 36.5312, 65.9219, 36.5312, 43.0156,68.1094,
-                       55.7188, 65.3281, 69.0469, 61.2344, 70.0156, 65.3281,54.7812, 69.0469, 70.3125, 25.0469, 25.0469, 69.1406, 31.3438,87.3594, 69.625, 68.2188,
-                       69.0469, 69.0469, 54.5469, 59.0312,56.3438, 69.625, 67.5312, 91.3125, 69.1406, 70.3125, 60.1094,42.4375, 26.0312, 42.4375, 63.3281};
+float char_widths[] = {32.5156f, 26.0312f, 38.2344f, 72.9531f, 53.125f, 86.625f, 65.8281f,21.2344f,42.7188f, 42.7188f, 54.25f, 53.9062f, 19.2031f, 57.125f,20.5156f, 63.9219f,
+                       91.7031f, 35.4531f, 75.25f, 71.9219f, 77.3438f,75.0469f, 73.2031f, 62.75f, 74.125f, 74.4219f, 24.3125f, 25.1406f,52.5469f, 59.125f, 52.5469f, 66.5469f,
+                       66.1094f, 83.4531f, 80.9062f,74.7031f, 82.3281f, 75.5312f, 73.8281f, 82.3281f, 84.9062f, 27.6406f,73.4375f, 81.3438f, 73.6406f, 96.2344f, 84.7188f, 86.0312f,
+                       80.6094f,86.0312f, 82.7188f, 77.0938f, 72.6094f, 83.3438f, 77.25f, 100.25f,78.7188f, 78.125f, 71.3438f, 36.5312f, 65.9219f, 36.5312f, 43.0156f,68.1094f,
+                       55.7188f, 65.3281f, 69.0469f, 61.2344f, 70.0156f, 65.3281f,54.7812f, 69.0469f, 70.3125f, 25.0469f, 25.0469f, 69.1406f, 31.3438f,87.3594f, 69.625f, 68.2188f,
+                       69.0469f, 69.0469f, 54.5469f, 59.0312f,56.3438f, 69.625f, 67.5312f, 91.3125f, 69.1406f, 70.3125f, 60.1094f,42.4375f, 26.0312f, 42.4375f, 63.3281};
 
 void draw_string(std::string text, glm::vec4 color, float x, float y, float x_scale, float y_scale) {
     float advance = 0.0f;
+    int count = 0;
     for (char c: text) {
+       if (count > dialog_time)
+           return;
+
        draw_image(char_vaos[c - 32], font_tex, color, x + advance / 48.0f * x_scale, y, x_scale, y_scale);
        advance += char_widths[c - 32];
+       count++;
     }
 }
 
@@ -243,7 +249,7 @@ PlayMode::PlayMode() : scene(*empty_scene) {
     font_tex = gen_texture("data/font.png");
     dialog_tex = gen_texture("data/dialog.png");
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 8; i++)
     {
         std::string s = "data/scene";
         s += std::to_string(i + 1);
@@ -257,7 +263,10 @@ PlayMode::PlayMode() : scene(*empty_scene) {
     Area* a1 = new Area(1, std::vector<std::string>(), std::vector<std::string>());
     Area* a2 = new Area(2, std::vector<std::string>(), std::vector<std::string>());
     Area* a3 = new Area(3, std::vector<std::string>(), std::vector<std::string>());
-    //Area* a4 = new Area(4, std::vector<std::string>(), std::vector<std::string>());
+    Area* a4 = new Area(4, std::vector<std::string>(), std::vector<std::string>());
+    Area* a5 = new Area(5, std::vector<std::string>(), std::vector<std::string>());
+    Area* a6 = new Area(6, std::vector<std::string>(), std::vector<std::string>());
+    Area* a7 = new Area(7, std::vector<std::string>(), std::vector<std::string>());
 
     a0->doors.emplace_back(new Door(glm::vec2(0.63f, -0.23f), glm::vec2(0.3f, 0.3f), a1, "", std::vector<std::string>()));
     a0->doors.emplace_back(new Door(glm::vec2(-0.1f, -0.8f), glm::vec2(0.3f, 0.3f), a3, "gravity-left", {"Hmm... this wall looks quite unclimable..."}));
@@ -270,8 +279,27 @@ PlayMode::PlayMode() : scene(*empty_scene) {
     a2->doors.emplace_back(new Door(glm::vec2(0.49f, 0.19f), glm::vec2(0.3f, 0.3f), a0, "gravity-left", {"This looks like a dangerous drop..."}));
     a2->keys.emplace_back(new Interactable(glm::vec2(0.30f, -0.67f), glm::vec2(0.3f, 0.3f), {"gravity-left"}, {"Auriga can now use left gravity!", "Perhaps this might give him a new perspective on drops and walls..."}, {"Auriga can now use gravity to climb walls!"}));
 
-    a3->doors.emplace_back(new Door(glm::vec2(0.0f, -0.76f), glm::vec2(0.3f, 0.3f), a0, "", {}));
+    a3->keys.emplace_back(new Interactable(glm::vec2(0.0f, -0.78f), glm::vec2(0.3f, 0.3f), {"blastoff"}, {"Auriga finds a jetpack!", "He feels the call of the third dimension...", "Click on Auriga to go for a flight!"}, {"Click on Auriga to go for a flight!"}));
     a3->doors.emplace_back(new Door(glm::vec2(0.11f, 0.56f), glm::vec2(0.3f, 0.3f), a0, "", {}));
+    a3->doors.emplace_back(new Door(glm::vec2(0.0f, 0.0f), glm::vec2(0.3f, 0.3f), a4, "blastoff", {"Auriga feels the call of the 3rd dimension...", "But he has no way to take off!"}));
+
+    a4->intro_message.emplace_back("Auriga soars through space, and eventually arrives at...");
+    a4->doors.emplace_back(new Door(glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f), a5, "", {}));
+
+    a5->intro_message.emplace_back("A mysterious floating square of grass...");
+    a5->doors.emplace_back(new Door(glm::vec2(0.85f, 0.11f), glm::vec2(0.3f, 0.3f), a6, "", {}));
+    a5->doors.emplace_back(new Door(glm::vec2(0.0f, -0.75f), glm::vec2(2.0f, 0.3f), a1, "no", {"Yikes, that antimatter looks dangerous, better stay away!"}));
+    a5->doors.emplace_back(new Door(glm::vec2(0.0f, 0.75f), glm::vec2(2.0f, 0.3f), a1, "no", {"Yikes, that antimatter looks dangerous, better stay away!"}));
+    a5->doors.emplace_back(new Door(glm::vec2(-0.75f, 0.0f), glm::vec2(0.3f, 2.0f), a1, "no", {"Yikes, that antimatter looks dangerous, better stay away!"}));
+
+    a6->intro_message.emplace_back("Auriga suddenly gets teleported to a dark expanse of cosmos...");
+    a6->intro_message.emplace_back("He only has a limited amount of fuel left!");
+    a6->intro_message.emplace_back("Perhaps he can use echolocation to find his way...");
+    a6->doors.emplace_back(new Door(glm::vec2(0.5f, 0.5f), glm::vec2(0.3f, 0.3f), a7, "", {}));
+    a6->doors.emplace_back(new Door(glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f), a6, "no", {"Oh no, it sounds like there's a dangerous asteroid that way!"}));
+
+    a7->intro_message.emplace_back("Yay! Auriga found his home moon!");
+    a7->intro_message.emplace_back("He is overjoyed to be back home with his family!");
 
     dialogs.emplace_back("Auriga the astronaut is lost in space :(");
     dialogs.emplace_back("Perhaps you can help him out! Click around to check things out!");
@@ -282,9 +310,14 @@ PlayMode::~PlayMode() {
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
 	if (evt.type == SDL_MOUSEBUTTONDOWN){
-        if (dialogs.size() > 0)
-            dialogs.erase(dialogs.begin());
-        else {
+        if (dialogs.size() > 0){
+            if (dialog_time < dialogs.begin()->length())
+                dialog_time = dialogs.begin()->length();
+            else {
+                dialogs.erase(dialogs.begin());
+                dialog_time = 0;
+            }
+        } else {
             int mx;
             int my;
 
@@ -292,8 +325,6 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 
             float x = 2.0f * (mx / 1280.0f - 0.5f);
             float y = 2.0f * (my / 720.0f - 0.5f);
-
-            printf("%f, %f\n", x, y);
 
             for (Door* d: current_area->doors) {
                 if (d->position.x - x > -d->size.x && d->position.x - x < d->size.x && d->position.y - y > -d->size.y && d->position.y - y < d->size.y) {
@@ -350,6 +381,8 @@ void PlayMode::update(float elapsed) {
 	right.downs = 0;
 	up.downs = 0;
 	down.downs = 0;
+
+    dialog_time += elapsed * 20.0f;
 }
 
 void draw_dialog() {
@@ -357,7 +390,8 @@ void draw_dialog() {
         std::string s = dialogs[0];
         draw_image(image_vao, dialog_tex, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), -1.0f, -0.75f, 2.0f, 0.25f);
         draw_string(s, glm::vec4(0.9f, 0.8f, 1.0f, 1.0f), -0.9f, -0.75f, 0.025f, 0.1f);
-    }
+    } else
+        dialog_time = 0.0f;
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
